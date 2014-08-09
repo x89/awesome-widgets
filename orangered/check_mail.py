@@ -1,13 +1,24 @@
 #!/usr/bin/env python
+"""Returns the number of message replies / private messages of a Reddit user"""
 
-import praw
-import sys
+from sys import exit
+from configparser import ConfigParser
 
-r = praw.Reddit(user_agent="Awesome WM Mail Check")
-r.login()  # TODO: Login from config file
+from praw import Reddit
+
+
+r = Reddit(user_agent="Awesome WM Mail Check")
+
+config = ConfigParser()
+config.read('user.ini')
+
+if config and 'reddit' in config:
+    r.login(config['reddit']['username'], config['reddit']['password'])
+else:
+    r.login()  # Prompt user for password.
 
 count = 0
 for _ in r.get_unread():
     count += 1
 
-sys.exit(count)
+exit(count)
